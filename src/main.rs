@@ -1,6 +1,12 @@
 use ncurses::*;
 use todo_rs::*;
 
+// TODO: persist the state of the application
+// TODO: add new items to TODO
+// TODO: edit the items
+// TODO: keep track of date when the item was DONE
+// TODO: undo system
+
 fn main() {
     initscr();
     noecho();
@@ -71,14 +77,10 @@ fn main() {
             },
             ' ' => match tab {
                 Tab::Todo => {
-                    if todo_curr < todos.len() {
-                        dones.push(todos.remove(todo_curr));
-                    }
+                    list_transfer(&mut dones, &mut todos, &mut todo_curr);
                 }
                 Tab::Done => {
-                    if done_curr < dones.len() {
-                        todos.push(dones.remove(done_curr));
-                    }
+                    list_transfer(&mut todos, &mut dones, &mut done_curr);
                 }
             },
             '\t' => {

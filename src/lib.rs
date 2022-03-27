@@ -79,3 +79,16 @@ pub fn list_down(list: &Vec<String>, list_curr: &mut usize) {
         *list_curr += 1;
     }
 }
+
+pub fn list_transfer(
+    list_dst: &mut Vec<String>,
+    list_src: &mut Vec<String>,
+    list_src_curr: &mut usize,
+) {
+    if *list_src_curr < list_src.len() {
+        list_dst.push(list_src.remove(*list_src_curr));
+        if *list_src_curr >= list_src.len() && list_src.len() > 0 {
+            *list_src_curr = list_src.len() - 1;
+        }
+    }
+}
