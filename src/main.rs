@@ -10,7 +10,7 @@ use todo_rs::*;
 // TODO(#6): undo system
 // TODO(#7): configuration file for setting keybindings
 // TODO(#8): reorder the items
-// TODO: two panels instead of tabs
+// TODO(#9): two panels instead of tabs
 
 fn main() {
     let mut args = env::args();
