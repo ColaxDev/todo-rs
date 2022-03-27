@@ -9,7 +9,7 @@ use todo_rs::*;
 // TODO(#5): keep track of date when the item was DONE
 // TODO(#6): undo system
 // TODO(#7): configuration file for setting keybindings
-// TODO: reorder the items
+// TODO(#8): reorder the items
 // TODO: two panels instead of tabs
 
 fn main() {
