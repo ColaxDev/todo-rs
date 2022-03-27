@@ -1,3 +1,9 @@
+use std::{
+    fs::File,
+    io::{BufRead, BufReader, Write},
+    process,
+};
+
 use ncurses::*;
 
 pub const REGULAR_PAIR: i16 = 0;
@@ -54,18 +60,34 @@ impl Ui {
     pub fn end(&mut self) {}
 }
 
-pub enum Tab {
+#[derive(Debug)]
+pub enum Status {
     Todo,
     Done,
 }
 
-impl Tab {
+impl Status {
     pub fn toggle(&self) -> Self {
         match self {
-            Tab::Todo => Tab::Done,
-            Tab::Done => Tab::Todo,
+            Status::Todo => Status::Done,
+            Status::Done => Status::Todo,
         }
     }
+}
+
+pub fn parse_item(line: &str) -> Option<(Status, &str)> {
+    let todo_prefix = "TODO: ";
+    let done_prefix = "DONE: ";
+
+    if line.starts_with(todo_prefix) {
+        return Some((Status::Todo, &line[todo_prefix.len()..]));
+    }
+
+    if line.starts_with(done_prefix) {
+        return Some((Status::Done, &line[done_prefix.len()..]));
+    }
+
+    return None;
 }
 
 pub fn list_up(list_curr: &mut usize) {
@@ -90,5 +112,33 @@ pub fn list_transfer(
         if *list_src_curr >= list_src.len() && list_src.len() > 0 {
             *list_src_curr = list_src.len() - 1;
         }
+    }
+}
+
+pub fn load_state(todos: &mut Vec<String>, dones: &mut Vec<String>, file_path: &str) {
+    let file = File::open(file_path).unwrap();
+    for (index, line) in BufReader::new(file).lines().enumerate() {
+        match parse_item(&line.unwrap()) {
+            Some((Status::Todo, title)) => {
+                todos.push(title.to_string());
+            }
+            Some((Status::Done, title)) => {
+                dones.push(title.to_string());
+            }
+            None => {
+                eprintln!("{}:{}: ERROR: ill-formed item line", file_path, index + 1);
+                process::exit(1);
+            }
+        }
+    }
+}
+
+pub fn save_state(todos: &Vec<String>, dones: &Vec<String>, file_path: &str) {
+    let mut file = File::create(file_path).unwrap();
+    for todo in todos.iter() {
+        writeln!(file, "TODO: {}", todo).unwrap();
+    }
+    for done in dones.iter() {
+        writeln!(file, "DONE: {}", done).unwrap();
     }
 }

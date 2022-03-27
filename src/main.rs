@@ -1,14 +1,37 @@
+use std::{env, process};
+
 use ncurses::*;
 use todo_rs::*;
 
-// TODO(#1): persist the state of the application
 // TODO(#2): add new items to TODO
 // TODO(#3): delete items
 // TODO(#4): edit the items
 // TODO(#5): keep track of date when the item was DONE
 // TODO(#6): undo system
+// TODO: save the state on SIGNIT
 
 fn main() {
+    let mut args = env::args();
+    args.next().unwrap();
+
+    let file_path = {
+        match args.next() {
+            Some(file_path) => file_path,
+            None => {
+                eprintln!("Usage: todo-rs <file-path>");
+                eprintln!("ERROR: file path is not provided");
+                process::exit(1);
+            }
+        }
+    };
+
+    let mut todos = Vec::<String>::new();
+    let mut todo_curr: usize = 0;
+    let mut dones = Vec::<String>::new();
+    let mut done_curr: usize = 0;
+
+    load_state(&mut todos, &mut dones, &file_path);
+
     initscr();
     noecho();
 
@@ -19,19 +42,7 @@ fn main() {
     init_pair(HIGHLIGHT_PAIR, COLOR_BLACK, COLOR_WHITE);
 
     let mut quit = false;
-    let mut todos: Vec<String> = vec![
-        "Write the todo app".to_string(),
-        "Buy a bread".to_string(),
-        "Make a cup of tea".to_string(),
-    ];
-    let mut todo_curr: usize = 0;
-    let mut dones: Vec<String> = vec![
-        "Start coding".to_string(),
-        "Have a breakfast".to_string(),
-        "Make a cup of tea".to_string(),
-    ];
-    let mut done_curr: usize = 0;
-    let mut tab = Tab::Todo;
+    let mut tab = Status::Todo;
 
     let mut ui = Ui::default();
 
@@ -41,7 +52,7 @@ fn main() {
         ui.begin(0, 0);
         {
             match tab {
-                Tab::Todo => {
+                Status::Todo => {
                     ui.label("[TODO] DONE ", REGULAR_PAIR);
                     ui.label("------------", REGULAR_PAIR);
                     ui.begin_list(todo_curr);
@@ -50,7 +61,7 @@ fn main() {
                     }
                     ui.end_list();
                 }
-                Tab::Done => {
+                Status::Done => {
                     ui.label(" TODO [DONE]", REGULAR_PAIR);
                     ui.label("------------", REGULAR_PAIR);
                     ui.begin_list(done_curr);
@@ -69,18 +80,18 @@ fn main() {
         match key as u8 as char {
             'q' => quit = true,
             'z' => match tab {
-                Tab::Todo => list_up(&mut todo_curr),
-                Tab::Done => list_up(&mut done_curr),
+                Status::Todo => list_up(&mut todo_curr),
+                Status::Done => list_up(&mut done_curr),
             },
             's' => match tab {
-                Tab::Todo => list_down(&todos, &mut todo_curr),
-                Tab::Done => list_down(&dones, &mut done_curr),
+                Status::Todo => list_down(&todos, &mut todo_curr),
+                Status::Done => list_down(&dones, &mut done_curr),
             },
             ' ' => match tab {
-                Tab::Todo => {
+                Status::Todo => {
                     list_transfer(&mut dones, &mut todos, &mut todo_curr);
                 }
-                Tab::Done => {
+                Status::Done => {
                     list_transfer(&mut todos, &mut dones, &mut done_curr);
                 }
             },
@@ -90,6 +101,8 @@ fn main() {
             _ => {}
         }
     }
+
+    save_state(&todos, &dones, &file_path);
 
     endwin();
 }
