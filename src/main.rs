@@ -51,28 +51,39 @@ fn main() {
     while !quit {
         erase();
 
-        ui.begin(0, 0);
+        ui.begin(Vec2::new(0, 0), LayoutKind::Horz);
         {
-            match tab {
-                Status::Todo => {
-                    ui.label("[TODO] DONE ", REGULAR_PAIR);
-                    ui.label("------------", REGULAR_PAIR);
-                    ui.begin_list(todo_curr);
-                    for (index, todo) in todos.iter().enumerate() {
-                        ui.list_element(&format!("- [ ] {}", todo), index);
-                    }
-                    ui.end_list();
-                }
-                Status::Done => {
-                    ui.label(" TODO [DONE]", REGULAR_PAIR);
-                    ui.label("------------", REGULAR_PAIR);
-                    ui.begin_list(done_curr);
-                    for (index, done) in dones.iter().enumerate() {
-                        ui.list_element(&format!("- [x] {}", done), index);
-                    }
-                    ui.end_list();
+            ui.begin_layout(LayoutKind::Vert);
+            {
+                ui.label("TODO:", REGULAR_PAIR);
+                for (index, todo) in todos.iter().enumerate() {
+                    ui.label(
+                        &format!("- [ ] {}", todo),
+                        if index == todo_curr && tab == Status::Todo {
+                            HIGHLIGHT_PAIR
+                        } else {
+                            REGULAR_PAIR
+                        },
+                    );
                 }
             }
+            ui.end_layout();
+
+            ui.begin_layout(LayoutKind::Vert);
+            {
+                ui.label("DONE:", REGULAR_PAIR);
+                for (index, done) in dones.iter().enumerate() {
+                    ui.label(
+                        &format!("- [x] {}", done),
+                        if index == done_curr && tab == Status::Done {
+                            HIGHLIGHT_PAIR
+                        } else {
+                            REGULAR_PAIR
+                        },
+                    );
+                }
+            }
+            ui.end_layout();
         }
         ui.end();
 
