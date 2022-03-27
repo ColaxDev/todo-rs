@@ -161,18 +161,14 @@ impl Status {
 }
 
 pub fn parse_item(line: &str) -> Option<(Status, &str)> {
-    let todo_prefix = "TODO: ";
-    let done_prefix = "DONE: ";
+    let todo_item = line
+        .strip_prefix("TODO: ")
+        .map(|title| (Status::Todo, title));
+    let done_item = line
+        .strip_prefix("DONE: ")
+        .map(|title| (Status::Done, title));
 
-    if line.starts_with(todo_prefix) {
-        return Some((Status::Todo, &line[todo_prefix.len()..]));
-    }
-
-    if line.starts_with(done_prefix) {
-        return Some((Status::Done, &line[done_prefix.len()..]));
-    }
-
-    None
+    todo_item.or(done_item)
 }
 
 pub fn list_up(list_curr: &mut usize) {
