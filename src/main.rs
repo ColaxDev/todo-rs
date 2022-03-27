@@ -6,7 +6,7 @@ use todo_rs::*;
 // TODO(#3): delete items
 // TODO(#4): edit the items
 // TODO(#5): keep track of date when the item was DONE
-// TODO: undo system
+// TODO(#6): undo system
 
 fn main() {
     initscr();
