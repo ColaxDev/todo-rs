@@ -8,7 +8,9 @@ use todo_rs::*;
 // TODO(#4): edit the items
 // TODO(#5): keep track of date when the item was DONE
 // TODO(#6): undo system
-// TODO: save the state on SIGNIT
+// TODO(#7): configuration file for setting keybindings
+// TODO: reorder the items
+// TODO: two panels instead of tabs
 
 fn main() {
     let mut args = env::args();
@@ -87,7 +89,7 @@ fn main() {
                 Status::Todo => list_down(&todos, &mut todo_curr),
                 Status::Done => list_down(&dones, &mut done_curr),
             },
-            ' ' => match tab {
+            '\n' => match tab {
                 Status::Todo => {
                     list_transfer(&mut dones, &mut todos, &mut todo_curr);
                 }
