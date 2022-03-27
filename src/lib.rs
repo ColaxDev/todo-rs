@@ -53,3 +53,29 @@ impl Ui {
 
     pub fn end(&mut self) {}
 }
+
+pub enum Tab {
+    Todo,
+    Done,
+}
+
+impl Tab {
+    pub fn toggle(&self) -> Self {
+        match self {
+            Tab::Todo => Tab::Done,
+            Tab::Done => Tab::Todo,
+        }
+    }
+}
+
+pub fn list_up(list_curr: &mut usize) {
+    if *list_curr > 0 {
+        *list_curr -= 1;
+    }
+}
+
+pub fn list_down(list: &Vec<String>, list_curr: &mut usize) {
+    if (*list_curr + 1) < list.len() {
+        *list_curr += 1;
+    }
+}

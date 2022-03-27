@@ -1,5 +1,4 @@
 use ncurses::*;
-use std::cmp::min;
 use todo_rs::*;
 
 fn main() {
@@ -25,6 +24,7 @@ fn main() {
         "Make a cup of tea".to_string(),
     ];
     let mut done_curr: usize = 0;
+    let mut tab = Tab::Todo;
 
     let mut ui = Ui::default();
 
@@ -33,21 +33,24 @@ fn main() {
 
         ui.begin(0, 0);
         {
-            ui.label("TODO:", REGULAR_PAIR);
-            ui.begin_list(todo_curr);
-            for (index, todo) in todos.iter().enumerate() {
-                ui.list_element(&format!("- [ ] {}", todo), index);
+            match tab {
+                Tab::Todo => {
+                    ui.label("TODO:", REGULAR_PAIR);
+                    ui.begin_list(todo_curr);
+                    for (index, todo) in todos.iter().enumerate() {
+                        ui.list_element(&format!("- [ ] {}", todo), index);
+                    }
+                    ui.end_list();
+                }
+                Tab::Done => {
+                    ui.label("DONE:", REGULAR_PAIR);
+                    ui.begin_list(done_curr);
+                    for (index, done) in dones.iter().enumerate() {
+                        ui.list_element(&format!("- [x] {}", done), index);
+                    }
+                    ui.end_list();
+                }
             }
-            ui.end_list();
-
-            ui.label("------------------------------", REGULAR_PAIR);
-
-            ui.label("DONE:", REGULAR_PAIR);
-            ui.begin_list(0);
-            for (index, done) in dones.iter().enumerate() {
-                ui.list_element(&format!("- [x] {}", done), index + 1);
-            }
-            ui.end_list();
         }
         ui.end();
 
@@ -56,22 +59,29 @@ fn main() {
         let key = getch();
         match key as u8 as char {
             'q' => quit = true,
-            'z' => {
-                if todo_curr > 0 {
-                    todo_curr -= 1;
+            'z' => match tab {
+                Tab::Todo => list_up(&mut todo_curr),
+                Tab::Done => list_up(&mut done_curr),
+            },
+            's' => match tab {
+                Tab::Todo => list_down(&todos, &mut todo_curr),
+                Tab::Done => list_down(&dones, &mut done_curr),
+            },
+            ' ' => match tab {
+                Tab::Todo => {
+                    if todo_curr < todos.len() {
+                        dones.push(todos.remove(todo_curr));
+                    }
                 }
-            }
-            's' => {
-                if (todo_curr + 1) < todos.len() {
-                    todo_curr += 1;
+                Tab::Done => {
+                    if done_curr < dones.len() {
+                        todos.push(dones.remove(done_curr));
+                    }
                 }
+            },
+            '\t' => {
+                tab = tab.toggle();
             }
-            ' ' => {
-                if todo_curr < todos.len() {
-                    dones.push(todos.remove(todo_curr));
-                }
-            }
-
             _ => {}
         }
     }
