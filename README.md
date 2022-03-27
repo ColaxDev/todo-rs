@@ -14,4 +14,5 @@ $ cargo run
 | -------------------------- | ------------------------------------------------ |
 | <kbd>z</kbd>, <kbd>s</kbd> | Move up and down                                 |
 | <kbd>q</kbd>               | Quit                                             |
+| <kbd>TAB</kbd>             | Switch between the TODO and DONE tabs            |
 | <kbd>Enter</kbd>           | Perform tan action on the UI highlighted element |
