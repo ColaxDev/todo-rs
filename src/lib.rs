@@ -172,7 +172,7 @@ pub fn parse_item(line: &str) -> Option<(Status, &str)> {
         return Some((Status::Done, &line[done_prefix.len()..]));
     }
 
-    return None;
+    None
 }
 
 pub fn list_up(list_curr: &mut usize) {
@@ -181,7 +181,7 @@ pub fn list_up(list_curr: &mut usize) {
     }
 }
 
-pub fn list_down(list: &Vec<String>, list_curr: &mut usize) {
+pub fn list_down(list: &[String], list_curr: &mut usize) {
     if (*list_curr + 1) < list.len() {
         *list_curr += 1;
     }
@@ -194,7 +194,7 @@ pub fn list_transfer(
 ) {
     if *list_src_curr < list_src.len() {
         list_dst.push(list_src.remove(*list_src_curr));
-        if *list_src_curr >= list_src.len() && list_src.len() > 0 {
+        if *list_src_curr >= list_src.len() && !list_src.is_empty() {
             *list_src_curr = list_src.len() - 1;
         }
     }
@@ -218,7 +218,7 @@ pub fn load_state(todos: &mut Vec<String>, dones: &mut Vec<String>, file_path: &
     }
 }
 
-pub fn save_state(todos: &Vec<String>, dones: &Vec<String>, file_path: &str) {
+pub fn save_state(todos: &[String], dones: &[String], file_path: &str) {
     let mut file = File::create(file_path).unwrap();
     for todo in todos.iter() {
         writeln!(file, "TODO: {}", todo).unwrap();
