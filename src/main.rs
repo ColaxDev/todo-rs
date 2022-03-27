@@ -10,7 +10,6 @@ use todo_rs::*;
 // TODO(#6): undo system
 // TODO(#7): configuration file for setting keybindings
 // TODO(#8): reorder the items
-// TODO(#9): two panels instead of tabs
 
 fn main() {
     let mut args = env::args();
@@ -55,7 +54,15 @@ fn main() {
         {
             ui.begin_layout(LayoutKind::Vert);
             {
-                ui.label("TODO:", REGULAR_PAIR);
+                ui.label(
+                    "TODO",
+                    if tab == Status::Todo {
+                        HIGHLIGHT_PAIR
+                    } else {
+                        REGULAR_PAIR
+                    },
+                );
+
                 for (index, todo) in todos.iter().enumerate() {
                     ui.label(
                         &format!("- [ ] {}", todo),
@@ -71,7 +78,15 @@ fn main() {
 
             ui.begin_layout(LayoutKind::Vert);
             {
-                ui.label("DONE:", REGULAR_PAIR);
+                ui.label(
+                    "DONE",
+                    if tab == Status::Done {
+                        HIGHLIGHT_PAIR
+                    } else {
+                        REGULAR_PAIR
+                    },
+                );
+
                 for (index, done) in dones.iter().enumerate() {
                     ui.label(
                         &format!("- [x] {}", done),
