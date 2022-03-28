@@ -10,9 +10,10 @@ $ cargo run TODO
 
 ## Controls
 
-| Keys                       | Description                                      |
-| -------------------------- | ------------------------------------------------ |
-| <kbd>z</kbd>, <kbd>s</kbd> | Move up and down                                 |
-| <kbd>q</kbd>               | Quit                                             |
-| <kbd>TAB</kbd>             | Switch between the TODO and DONE panels          |
-| <kbd>Enter</kbd>           | Perform an action on the highlighted UI element  |
+| Keys                                   | Description                                      |
+| -------------------------------------- | ------------------------------------------------ |
+| <kbd>z</kbd>, <kbd>s</kbd>             | Move up and down                                 |
+| <kbd>Shift+Z</kbd>, <kbd>Shift+S</kbd> | Drag the current item up and down                |
+| <kbd>q</kbd>                           | Quit                                             |
+| <kbd>TAB</kbd>                         | Switch between the TODO and DONE panels          |
+| <kbd>Enter</kbd>                       | Perform an action on the highlighted UI element  |
