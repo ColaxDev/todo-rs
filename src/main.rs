@@ -10,6 +10,8 @@ use todo_rs::*;
 // TODO(#6): undo system
 // TODO(#7): configuration file for setting keybindings
 // TODO(#8): reorder the items
+// TODO: save the state on SIGINT
+// TODO: jump to the end and begining of the lists
 
 fn main() {
     let mut args = env::args();
@@ -115,6 +117,14 @@ fn main() {
         let key = getch();
         match key as u8 as char {
             'q' => quit = true,
+            'Z' => match panel {
+                Status::Todo => list_drag_up(&mut todos, &mut todo_curr),
+                Status::Done => list_drag_up(&mut dones, &mut done_curr),
+            },
+            'S' => match panel {
+                Status::Todo => list_drag_down(&mut todos, &mut todo_curr),
+                Status::Done => list_drag_down(&mut dones, &mut done_curr),
+            },
             'z' => match panel {
                 Status::Todo => list_up(&mut todo_curr),
                 Status::Done => list_up(&mut done_curr),

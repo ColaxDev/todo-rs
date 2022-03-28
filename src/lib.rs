@@ -175,6 +175,20 @@ pub fn parse_item(line: &str) -> Option<(Status, &str)> {
     todo_item.or(done_item)
 }
 
+pub fn list_drag_up(list: &mut [String], list_curr: &mut usize) {
+    if *list_curr > 0 {
+        list.swap(*list_curr, *list_curr - 1);
+        *list_curr -= 1;
+    }
+}
+
+pub fn list_drag_down(list: &mut [String], list_curr: &mut usize) {
+    if (*list_curr + 1) < list.len() {
+        list.swap(*list_curr, *list_curr + 1);
+        *list_curr += 1;
+    }
+}
+
 pub fn list_up(list_curr: &mut usize) {
     if *list_curr > 0 {
         *list_curr -= 1;
